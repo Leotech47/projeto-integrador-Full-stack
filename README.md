@@ -1,10 +1,14 @@
 # Projeto Integrador 4 – TI
 
 **Gran Faculdade**
+---
 
 **Aluno:** Leonardo da Silva
+
 **Curso:** Análise e Desenvolvimento de Sistemas
+
 **Período:** 4º semestre
+
 **Professor:** Francisco Marcelo Marques Lima
 
 ---
