@@ -305,4 +305,13 @@ O frontend, muitas vezes referido como o "lado do cliente", é responsável por 
     Similar à página de produto, a página de fornecedor gerencia as operações relacionadas aos fornecedores. Ele cuida dos detalhes como nome do fornecedor, CNPJ, endereço e contato.
 3.  **Página de Associação Produto/Fornecedor:**
     Esta página lida com a relação entre produtos e fornecedores. Sabendo que um produto pode ser fornecido por vários fornecedores e um fornecedor pode oferecer vários produtos, essa relação é muitas vezes chamada de "muitos para muitos". A página de associação permite associar um produto a um fornecedor, desassociá-los e consultar quais produtos são fornecidos por um determinado fornecedor (e vice-versa).
-    
+
+---
+
+# Execução do projeto:
+
+1. Criar o repositório no GITHUB: projeto-integrador-fullstack;
+2. Abrir o VSCode e clonar o repositório do projeto fullstack;
+3. Instalar as extensões e bibliotecas necessárias aoo projeto;
+4. Utilizar o Git Hub copilot para ajudar na execução do código;
+5. Configurar as rotas da API e Testar as funcionalidades do frontend e do backend do projeto fullstack.
