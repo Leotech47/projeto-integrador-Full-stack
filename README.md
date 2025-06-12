@@ -299,12 +299,20 @@ Para instalar extensões, clique no ícone de extensões na barra lateral esquer
 
 O frontend, muitas vezes referido como o "lado do cliente", é responsável por interagir com o usuário da aplicação, portanto aspectos como usabilidade e experiência devem ser observados quando de sua construção. Neste projeto iremos construir 3 páginas conforme detalhado abaixo que deverão consumir o backend construído na atividade anterior.
 
-1.  **Página de Produto:**
+1.  **Pagina inicial de apresentação: "Garagem Hamburgueria"
+2.  Dentro da página inicial deverá conter:
+3.  Cabeçalho: Nome da hamburgueria e abaixo do nome deverá conter atalhos para conexão as páginas: "Página de produto", "Página de Fornecedor" e Página de Associação Produto/Fornecedor;
+4.  Corpo: tipos de Sanduiches e tipos de bebidas
+5.  Icone do whatsapp para contato com o vendedor e realizar pedidos;
+6.  Rodapé: endereço da hamburgueria e telefone de contato;
+7.  Observação: para acessar as páginas secundárias, de uso exclusivo de funcionários autorizados, deverá ter uma página de autenticação para inserir LOGIN e SENHA para acessar as páginas de cadastro de fornecedores e produtos;
+8.  **Página de Produto:**
     Esta página é responsável por gerenciar as operações relacionadas aos produtos, como criar, ler, atualizar e deletar (CRUD). No contexto da nossa aplicação, ela irá interagir com o backend para armazenar informações sobre cada produto, como nome, descrição, preço e código de barras.
-2.  **Página de Fornecedor:**
+9.  **Página de Fornecedor:**
     Similar à página de produto, a página de fornecedor gerencia as operações relacionadas aos fornecedores. Ele cuida dos detalhes como nome do fornecedor, CNPJ, endereço e contato.
-3.  **Página de Associação Produto/Fornecedor:**
+10.  **Página de Associação Produto/Fornecedor:**
     Esta página lida com a relação entre produtos e fornecedores. Sabendo que um produto pode ser fornecido por vários fornecedores e um fornecedor pode oferecer vários produtos, essa relação é muitas vezes chamada de "muitos para muitos". A página de associação permite associar um produto a um fornecedor, desassociá-los e consultar quais produtos são fornecidos por um determinado fornecedor (e vice-versa).
+
 
 ---
 
@@ -315,3 +323,8 @@ O frontend, muitas vezes referido como o "lado do cliente", é responsável por 
 3. Instalar as extensões e bibliotecas necessárias aoo projeto;
 4. Utilizar o Git Hub copilot para ajudar na execução do código;
 5. Configurar as rotas da API e Testar as funcionalidades do frontend e do backend do projeto fullstack.
+6. Teste de qualidade e segurança da aplicação fullstack.
+
+---
+
+# Prompt a utilizar no "Agente do Github copilot": criar uma estrutura de pastas e arquivos para implantar o projeto-integrador-fullstack que deverá seguir as instruções do arquivo README.md .
