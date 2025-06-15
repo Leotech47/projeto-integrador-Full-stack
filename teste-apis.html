@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leo Tech - Teste de APIs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            min-height: 50px;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Leo Tech - Sistema de Testes Automáticos</h1>
+        
+        <div class="test-section">
+            <h2>📋 Teste de Fornecedores</h2>
+            <button onclick="listarFornecedores()">Listar Fornecedores</button>
+            <button onclick="criarFornecedor()">Criar Fornecedor Teste</button>
+            <div id="fornecedores-result" class="result">Clique nos botões para testar...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📦 Teste de Produtos</h2>
+            <button onclick="listarProdutos()">Listar Produtos</button>
+            <button onclick="criarProduto()">Criar Produto Teste</button>
+            <div id="produtos-result" class="result">Clique nos botões para testar...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 Teste de Associações</h2>
+            <button onclick="listarAssociacoes()">Listar Associações</button>
+            <div id="associacoes-result" class="result">Clique nos botões para testar...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001';
+        
+        async function listarFornecedores() {
+            try {
+                const response = await fetch(`${API_BASE}/fornecedores`);
+                const data = await response.json();
+                document.getElementById('fornecedores-result').innerHTML = 
+                    `<span class="success">✅ ${data.length} fornecedores encontrados:</span><br>` +
+                    data.map(f => `• ${f.nome} (ID: ${f.id})`).join('<br>');
+            } catch (error) {
+                document.getElementById('fornecedores-result').innerHTML = 
+                    `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+        
+        async function criarFornecedor() {
+            try {
+                const novoFornecedor = {
+                    nome: 'Fornecedor Teste Web',
+                    cnpj: '88.888.888/0001-88',
+                    endereco: 'Rua Web, 456',
+                    telefone: '(11) 88888-8888',
+                    email: 'web@teste.com',
+                    site: 'https://web-teste.com'
+                };
+                
+                const response = await fetch(`${API_BASE}/fornecedores`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(novoFornecedor)
+                });
+                
+                const data = await response.json();
+                document.getElementById('fornecedores-result').innerHTML = 
+                    `<span class="success">✅ Fornecedor criado com ID: ${data.id}</span><br>Nome: ${data.nome}`;
+            } catch (error) {
+                document.getElementById('fornecedores-result').innerHTML = 
+                    `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+        
+        async function listarProdutos() {
+            try {
+                const response = await fetch(`${API_BASE}/produtos`);
+                const data = await response.json();
+                document.getElementById('produtos-result').innerHTML = 
+                    `<span class="success">✅ ${data.length} produtos encontrados:</span><br>` +
+                    data.map(p => `• ${p.nome} - R$ ${p.preco} (Estoque: ${p.quantidade_estoque}) - Fornecedor: ${p.fornecedor_nome}`).join('<br>');
+            } catch (error) {
+                document.getElementById('produtos-result').innerHTML = 
+                    `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+        
+        async function criarProduto() {
+            try {
+                const novoProduto = {
+                    nome: 'Produto Teste Web',
+                    preco: 199.99,
+                    quantidade_estoque: 100,
+                    fornecedor_id: 1
+                };
+                
+                const response = await fetch(`${API_BASE}/produtos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(novoProduto)
+                });
+                
+                const data = await response.json();
+                document.getElementById('produtos-result').innerHTML = 
+                    `<span class="success">✅ Produto criado com ID: ${data.id}</span><br>Nome: ${data.nome}<br>Preço: R$ ${data.preco}`;
+            } catch (error) {
+                document.getElementById('produtos-result').innerHTML = 
+                    `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+        
+        async function listarAssociacoes() {
+            try {
+                const response = await fetch(`${API_BASE}/associacoes`);
+                const data = await response.json();
+                if (data.length > 0) {
+                    document.getElementById('associacoes-result').innerHTML = 
+                        `<span class="success">✅ ${data.length} associações encontradas:</span><br>` +
+                        data.map(a => `• Produto: ${a.produto_nome} - Fornecedor: ${a.fornecedor_nome}`).join('<br>');
+                } else {
+                    document.getElementById('associacoes-result').innerHTML = 
+                        `<span class="success">✅ Nenhuma associação encontrada (normal)</span>`;
+                }
+            } catch (error) {
+                document.getElementById('associacoes-result').innerHTML = 
+                    `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+        
+        // Auto-executar testes ao carregar a página
+        window.onload = function() {
+            setTimeout(() => {
+                listarFornecedores();
+                listarProdutos();
+                listarAssociacoes();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

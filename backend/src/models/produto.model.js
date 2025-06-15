@@ -1,22 +1,12 @@
 const db = require('../database/db');
 
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS produtos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    preco REAL,
-    fornecedor_id INTEGER,
-    FOREIGN KEY (fornecedor_id) REFERENCES fornecedores (id)
-  )`);
-});
-
 module.exports = {
-  // Definição do modelo Produto
   getAll: (callback) => {
     const query = `
       SELECT p.*, f.nome as fornecedor_nome 
       FROM produtos p 
       LEFT JOIN fornecedores f ON p.fornecedor_id = f.id
+      ORDER BY p.id DESC
     `;
     db.all(query, [], callback);
   },
@@ -30,44 +20,79 @@ module.exports = {
     `;
     db.get(query, [id], callback);
   },
-
+  
   create: (produto, callback) => {
-    if (!produto.nome || typeof produto.preco !== 'number' || produto.preco < 0) {
-      return callback(new Error('Dados do produto inválidos'));
+    const { nome, preco, quantidade_estoque, fornecedor_id } = produto;
+    
+    // Validação básica
+    if (!nome || nome.trim().length < 2) {
+      return callback(new Error('Nome é obrigatório e deve ter pelo menos 2 caracteres'));
     }
-
-    const query = `
-      INSERT INTO produtos (nome, preco, fornecedor_id) 
-      VALUES (?, ?, ?)
+    
+    if (typeof preco !== 'number' || preco < 0) {
+      return callback(new Error('Preço deve ser um número positivo'));
+    }    const query = `
+      INSERT INTO produtos (nome, preco, quantidade_estoque, fornecedor_id) 
+      VALUES (?, ?, ?, ?)
     `;
-    db.run(query, [produto.nome, produto.preco, produto.fornecedor_id], function(err) {
+    const quantidadeEstoque = quantidade_estoque || 0;
+    
+    db.run(query, [nome, preco, quantidadeEstoque, fornecedor_id], function(err) {
       if (err) return callback(err);
       // Busca o produto recém criado com os dados do fornecedor
       module.exports.getById(this.lastID, callback);
     });
   },
-
+  
   update: (id, produto, callback) => {
-    if (!produto.nome || typeof produto.preco !== 'number' || produto.preco < 0) {
-      return callback(new Error('Dados do produto inválidos'));
+    const { nome, preco, quantidade_estoque, fornecedor_id } = produto;
+    
+    // Validação básica
+    if (!nome || nome.trim().length < 2) {
+      return callback(new Error('Nome é obrigatório e deve ter pelo menos 2 caracteres'));
     }
-
-    const query = `
+    
+    if (typeof preco !== 'number' || preco < 0) {
+      return callback(new Error('Preço deve ser um número positivo'));
+    }    const query = `
       UPDATE produtos 
-      SET nome = ?, 
-          preco = ?, 
-          fornecedor_id = ?,
-          updated_at = CURRENT_TIMESTAMP 
+      SET nome = ?, preco = ?, quantidade_estoque = ?, fornecedor_id = ?
       WHERE id = ?
     `;
-    db.run(query, [produto.nome, produto.preco, produto.fornecedor_id, id], function(err) {
+    const quantidadeEstoque = quantidade_estoque || 0;
+    
+    db.run(query, [nome, preco, quantidadeEstoque, fornecedor_id, id], function(err) {
       if (err) return callback(err);
+      
+      if (this.changes === 0) {
+        return callback(null, null); // Produto não encontrado
+      }
+      
       // Busca o produto atualizado com os dados do fornecedor
       module.exports.getById(id, callback);
     });
   },
-
+  updateEstoque: (id, operacao, quantidade, callback) => {
+    // operacao: 'adicionar' ou 'subtrair'
+    const query = operacao === 'adicionar' 
+      ? 'UPDATE produtos SET quantidade_estoque = quantidade_estoque + ? WHERE id = ?'
+      : 'UPDATE produtos SET quantidade_estoque = quantidade_estoque - ? WHERE id = ?';
+    
+    db.run(query, [quantidade, id], function(err) {
+      if (err) return callback(err);
+      
+      if (this.changes === 0) {
+        return callback(null, null); // Produto não encontrado
+      }
+      
+      module.exports.getById(id, callback);
+    });
+  },
+  
   delete: (id, callback) => {
-    db.run('DELETE FROM produtos WHERE id = ?', [id], callback);
+    db.run('DELETE FROM produtos WHERE id = ?', [id], function(err) {
+      if (err) return callback(err);
+      callback(null, { changes: this.changes });
+    });
   }
 };

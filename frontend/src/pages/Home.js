@@ -8,7 +8,7 @@ function Home() {
     <div>
       <Header />
       <main>
-        <h2>Bem-vindo à Garagem Hamburgueria</h2>
+        <h2>Bem-vindo à Leo Tech</h2>
         <section>
           <h3>Sanduíches</h3>
           <ul>

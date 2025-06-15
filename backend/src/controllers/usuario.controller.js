@@ -1,6 +1,7 @@
 const Usuario = require('../models/usuario.model');
 const emailService = require('../utils/email');
 const logger = require('../utils/logger');
+const crypto = require('crypto');
 
 module.exports = {
   register: async (req, res) => {
@@ -139,5 +140,130 @@ module.exports = {
       if (err) return res.status(500).json({ error: err.message });
       res.json(rows);
     });
+  },
+  resendConfirmationEmail: async (req, res) => {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email é obrigatório.' });
+    }
+
+    try {
+      // Buscar usuário pelo email
+      const user = await new Promise((resolve, reject) => {
+        Usuario.findByEmail(email, (err, user) => {
+          if (err) reject(err);
+          resolve(user);
+        });
+      });
+
+      if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
+      }
+
+      if (user.confirmado) {
+        return res.status(400).json({ error: 'Email já confirmado.' });
+      }
+
+      // Gerar novo token de confirmação
+      const newToken = crypto.randomBytes(24).toString('hex');
+      
+      // Atualizar token no banco
+      await new Promise((resolve, reject) => {
+        const db = require('../database/db');
+        db.run('UPDATE usuarios SET token_confirmacao = ? WHERE email = ?', 
+          [newToken, email], (err) => {
+            if (err) reject(err);
+            resolve();
+          });
+      });
+
+      // Enviar novo email de confirmação
+      const confirmUrl = `http://localhost:3000/confirmar-email?token=${newToken}`;
+      const emailResult = await emailService.sendEmail(
+        email,
+        'Confirmação de cadastro (reenvio)',
+        `<p>Olá! Aqui está seu novo link para confirmar seu cadastro: <a href="${confirmUrl}">${confirmUrl}</a></p>`
+      );
+
+      if (!emailResult.success) {
+        logger.error('Erro ao reenviar email de confirmação:', emailResult.error);
+        return res.status(500).json({ 
+          error: 'Erro ao enviar email de confirmação. Por favor, tente novamente.' 
+        });
+      }
+
+      res.json({ 
+        message: 'Novo email de confirmação enviado. Por favor, verifique sua caixa de entrada.' 
+      });
+
+    } catch (error) {
+      logger.error('Erro ao reenviar confirmação:', error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  },
+
+  recuperarSenha: async (req, res) => {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email é obrigatório.' });
+    }
+
+    try {
+      const user = await new Promise((resolve, reject) => {
+        Usuario.findByEmail(email, (err, user) => {
+          if (err) reject(err);
+          resolve(user);
+        });
+      });
+
+      if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
+      }
+
+      // Gerar token temporário para redefinição de senha
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const tokenExpiry = new Date(Date.now() + 3600000); // 1 hora de validade
+
+      // Salvar token no banco
+      await new Promise((resolve, reject) => {
+        const db = require('../database/db');
+        db.run(
+          'UPDATE usuarios SET reset_token = ?, reset_token_expiry = ? WHERE email = ?',
+          [resetToken, tokenExpiry.toISOString(), email],
+          (err) => {
+            if (err) reject(err);
+            resolve();
+          }
+        );
+      });
+
+      // Enviar email com link para redefinição de senha
+      const resetUrl = `http://localhost:3000/redefinir-senha?token=${resetToken}`;
+      const emailResult = await emailService.sendEmail(
+        email,
+        'Recuperação de Senha',
+        `<p>Você solicitou a recuperação de senha. Clique no link abaixo para criar uma nova senha:</p>
+         <p><a href="${resetUrl}">${resetUrl}</a></p>
+         <p>Este link é válido por 1 hora.</p>
+         <p>Se você não solicitou a recuperação de senha, ignore este email.</p>`
+      );
+
+      if (!emailResult.success) {
+        logger.error('Erro ao enviar email de recuperação:', emailResult.error);
+        return res.status(500).json({ 
+          error: 'Erro ao enviar email de recuperação. Por favor, tente novamente.' 
+        });
+      }
+
+      res.json({ 
+        message: 'Email de recuperação enviado. Por favor, verifique sua caixa de entrada.' 
+      });
+
+    } catch (error) {
+      logger.error('Erro ao processar recuperação de senha:', error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
   }
 };

@@ -9,5 +9,7 @@ router.post('/cancelar', usuarioController.requestCancel);
 router.get('/confirmar-cancelamento', usuarioController.confirmCancel);
 router.delete('/delete-all', usuarioController.deleteAll);
 router.get('/list-all', usuarioController.listAll);
+router.post('/resend-confirmation', usuarioController.resendConfirmationEmail);
+router.post('/recuperar-senha', usuarioController.recuperarSenha);
 
 module.exports = router;

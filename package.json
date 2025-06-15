@@ -1,0 +1,18 @@
+{
+  "name": "projeto-integrador-fullstack",
+  "version": "1.0.0",
+  "description": "Projeto integrador fullstack com backend Node.js e frontend React",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm start",
+    "client": "cd frontend && npm start",
+    "install-deps": "cd backend && npm install && cd ../frontend && npm install"
+  },
+  "keywords": ["fullstack", "nodejs", "react"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}

@@ -6,7 +6,7 @@ FACULDADE GRAN ([https://faculdade.grancursosonline.com.br/]
 
 # Projeto Integrador 4 – TI
 
-**Gran Faculdade**
+**Leo Tech**
 ---
 
 **Aluno:** Leonardo da Silva
@@ -299,12 +299,12 @@ Para instalar extensões, clique no ícone de extensões na barra lateral esquer
 
 O frontend, muitas vezes referido como o "lado do cliente", é responsável por interagir com o usuário da aplicação, portanto aspectos como usabilidade e experiência devem ser observados quando de sua construção. Neste projeto iremos construir 3 páginas conforme detalhado abaixo que deverão consumir o backend construído na atividade anterior.
 
-1.  **Pagina inicial de apresentação: "Garagem Hamburgueria"
+1.  **Pagina inicial de apresentação: "Leo Tech"
 2.  Dentro da página inicial deverá conter:
-3.  Cabeçalho: Nome da hamburgueria e abaixo do nome deverá conter atalhos para conexão as páginas: "Página de produto", "Página de Fornecedor" e Página de Associação Produto/Fornecedor;
+3.  Cabeçalho: Nome da empresa e abaixo do nome deverá conter atalhos para conexão as páginas: "Página de produto", "Página de Fornecedor" e Página de Associação Produto/Fornecedor;
 4.  Corpo: tipos de Sanduiches e tipos de bebidas
 5.  Icone do whatsapp para contato com o vendedor e realizar pedidos;
-6.  Rodapé: endereço da hamburgueria e telefone de contato;
+6.  Rodapé: endereço da empresa e telefone de contato;
 7.  Observação: para acessar as páginas secundárias, de uso exclusivo de funcionários autorizados, deverá ter uma página de autenticação para inserir LOGIN e SENHA para acessar as páginas de cadastro de fornecedores e produtos;
 8.  **Página de Produto:**
     Esta página é responsável por gerenciar as operações relacionadas aos produtos, como criar, ler, atualizar e deletar (CRUD). No contexto da nossa aplicação, ela irá interagir com o backend para armazenar informações sobre cada produto, como nome, descrição, preço e código de barras.
@@ -327,4 +327,64 @@ O frontend, muitas vezes referido como o "lado do cliente", é responsável por 
 
 ---
 
-# Prompt a utilizar no "Agente do Github copilot": criar uma estrutura de pastas e arquivos para implantar o projeto-integrador-fullstack que deverá seguir as instruções do arquivo README.md .
+## 🚀 EXECUÇÃO AUTOMÁTICA DA APLICAÇÃO
+
+### Primeira Instalação
+Execute o script de instalação inicial:
+```bash
+install.bat
+```
+
+### Executar a Aplicação
+
+#### Modo Produção (Recomendado)
+```bash
+# Inicia backend e frontend automaticamente
+start.bat
+```
+
+#### Modo Desenvolvimento
+```bash  
+# Inicia com auto-reload para desenvolvimento
+dev.bat
+```
+
+#### Parar os Servidores
+```bash
+# Para todos os servidores da aplicação
+stop.bat
+```
+
+## 📱 Acesso à Aplicação
+
+Após executar os scripts:
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:3001
+
+## 🎯 Funcionalidades Implementadas
+
+### ✅ Gerenciamento de Fornecedores
+- Cadastro completo (nome, CNPJ, endereço, telefone, email, site)
+- Edição e exclusão com confirmação
+- Listagem detalhada com todos os campos
+
+### ✅ Gerenciamento de Produtos  
+- Cadastro com controle de estoque
+- Botões para adicionar/subtrair estoque em tempo real
+- Edição e exclusão
+- Listagem com informações completas de estoque
+
+### ✅ Relatórios da Associação
+- Visualização de produtos com detalhes de estoque
+- Filtros por nome e quantidade em estoque
+- Exportação para CSV e PDF
+- Função de impressão direta
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Backend**: Node.js, Express, SQLite, JWT, bcryptjs
+- **Frontend**: React, JavaScript, CSS3
+- **Banco de Dados**: SQLite com schema atualizado
+- **Bibliotecas**: jsPDF, express-validator, cors, nodemailer
+
+---

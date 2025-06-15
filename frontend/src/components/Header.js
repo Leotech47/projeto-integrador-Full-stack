@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 function Header() {
   return (
     <header>
-      <h1>Garagem Hamburgueria</h1>
+      <h1>Leo Tech</h1>
       {/* Atalhos para páginas com alinhamento personalizado */}
       <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 20, margin: '20px 0' }}>
         <div style={{ flex: 1, textAlign: 'left' }}>

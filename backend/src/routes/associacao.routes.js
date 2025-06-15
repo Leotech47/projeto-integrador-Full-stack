@@ -1,13 +1,26 @@
 // Rotas para Associação Produto/Fornecedor
 const express = require('express');
 const router = express.Router();
-const associacaoController = require('../controllers/associacao.controller');
+const validate = require('../middleware/validator');
+const { validateAssociacao, associacaoController } = require('../controllers/associacao.controller');
 
-// Rota de teste para GET /associacoes
+// Rotas CRUD básicas
 router.get('/', associacaoController.getAll);
 router.get('/:id', associacaoController.getById);
-router.post('/', associacaoController.create);
-router.put('/:id', associacaoController.update);
+router.post('/', 
+  validateAssociacao,
+  validate,
+  associacaoController.create
+);
+router.put('/:id', 
+  validateAssociacao,
+  validate,
+  associacaoController.update
+);
 router.delete('/:id', associacaoController.delete);
+
+// Rotas para buscar associações por produto ou fornecedor
+router.get('/produto/:produto_id', associacaoController.getByProduto);
+router.get('/fornecedor/:fornecedor_id', associacaoController.getByFornecedor);
 
 module.exports = router;

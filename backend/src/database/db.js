@@ -19,25 +19,42 @@ try {
 
   // Criação das tabelas em ordem correta
   db.serialize(() => {
-    // Tabela de fornecedores
+    // Tabela de fornecedores (deve ser criada primeiro)
     db.run(`CREATE TABLE IF NOT EXISTS fornecedores (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
+      cnpj TEXT,
+      endereco TEXT,
+      telefone TEXT,
+      email TEXT,
+      site TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Tabela de produtos com chave estrangeira
+    // Tabela de produtos com chave estrangeira e campo quantidade_estoque
     db.run(`CREATE TABLE IF NOT EXISTS produtos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
       preco REAL NOT NULL CHECK (preco >= 0),
+      quantidade_estoque INTEGER DEFAULT 0,
       fornecedor_id INTEGER,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
+    )`);
+
+    // Tabela de associações produto-fornecedor
+    db.run(`CREATE TABLE IF NOT EXISTS associacoes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      produto_id INTEGER NOT NULL,
+      fornecedor_id INTEGER NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE,
+      FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id) ON DELETE CASCADE,
+      UNIQUE(produto_id, fornecedor_id)
     )`);
 
     // Tabela de usuários
@@ -48,6 +65,8 @@ try {
       senha TEXT NOT NULL,
       confirmado INTEGER DEFAULT 0,
       token_confirmacao TEXT,
+      reset_token TEXT,
+      reset_token_expiry DATETIME,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);

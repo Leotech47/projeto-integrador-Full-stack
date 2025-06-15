@@ -11,6 +11,10 @@ const validateProduto = [
   body('preco')
     .isFloat({ min: 0 })
     .withMessage('Preço deve ser um número positivo'),
+  body('quantidade_estoque')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Quantidade em estoque deve ser um número inteiro positivo'),
   body('fornecedor_id')
     .optional()
     .isInt()
@@ -104,6 +108,36 @@ const produtoController = {
       });
     } catch (error) {
       logger.error(`Erro não tratado ao deletar produto ${req.params.id}:`, error);
+      res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+  },
+
+  updateEstoque: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { operacao, quantidade } = req.body;
+
+      if (!['adicionar', 'subtrair'].includes(operacao)) {
+        return res.status(400).json({ message: 'Operação deve ser "adicionar" ou "subtrair"' });
+      }
+
+      if (!quantidade || quantidade <= 0) {
+        return res.status(400).json({ message: 'Quantidade deve ser um número positivo' });
+      }
+
+      Produto.updateEstoque(id, operacao, quantidade, (err, produto) => {
+        if (err) {
+          logger.error(`Erro ao atualizar estoque do produto ${id}:`, err);
+          return res.status(500).json({ message: 'Erro ao atualizar estoque' });
+        }
+        if (!produto) {
+          return res.status(404).json({ message: 'Produto não encontrado' });
+        }
+        logger.info(`Estoque atualizado para produto ${id}: ${operacao} ${quantidade}`);
+        res.json(produto);
+      });
+    } catch (error) {
+      logger.error(`Erro não tratado ao atualizar estoque do produto ${req.params.id}:`, error);
       res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
